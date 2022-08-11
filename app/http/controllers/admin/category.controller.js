@@ -1,6 +1,7 @@
 const createError = require("http-errors");
+const { default: mongoose } = require("mongoose");
 const { CategoryModel } = require("../../../models/categories");
-const { addCetegorySchema } = require("../../validators/admin/category.schema");
+const { addCetegorySchema, updateCetegorySchema } = require("../../validators/admin/category.schema");
 const Controller = require("../controller");
 class CategoryController extends Controller{
      async addCategory(req,res,next){
@@ -23,7 +24,19 @@ class CategoryController extends Controller{
     }
      async editCategory(req,res,next){
         try {
-             return res.status(200).send("index Page Store");
+             const {id} = req.params ;
+             const {title} = req.body ;
+             await this.checkExistCategory(id);
+             await updateCetegorySchema.validateAsync(req.body);
+             const result = await CategoryModel.updateOne({_id : id} , {$set : {title}});
+             if(result.modifiedCount == 0) throw createError.InternalServerError("Can Not Update Category");
+             return res.status(200).json({
+               data : {
+                   statusCode : 200 ,
+                   success : true ,
+                   message : "Updated"
+               }
+           })
         } catch (error) {
                  next(error)
          
@@ -33,7 +46,12 @@ class CategoryController extends Controller{
         try {
             const {id} = req.params;
             const category =await this.checkExistCategory(id);
-            const deleteResult = await CategoryModel.deleteOne({_id : category._id});
+            const deleteResult = await CategoryModel.deleteMany({
+               $or :[
+                    {_id : category._id} ,
+                    {parent : category._id}
+               ]
+               });
             if(deleteResult.deletedCount == 0 ) throw createError.InternalServerError("Can Not Delete Category");
             return res.status(200).json({
                data :{
@@ -48,7 +66,7 @@ class CategoryController extends Controller{
      }
      async getAllCategory(req,res,next){
         try {
-             const category = await CategoryModel.aggregate([
+/*           const categories = await CategoryModel.aggregate([
                {
                $lookup : {
                     from : "categories" ,
@@ -69,10 +87,36 @@ class CategoryController extends Controller{
                     }
                }
           ])
+          */
+/*           const categories = await CategoryModel.aggregate([
+               {
+               $graphLookup : {
+                    from : "categories" ,
+                    startWith : "$_id" ,
+                    connectFromField : "_id" ,
+                    connectToField : "parent" ,
+                    maxDepth : 5 ,
+                    depthField : "depth" ,
+                    as : "childeren"
+               }
+               },{
+                    $project :{
+                         __v : 0 ,
+                         "childeren.__v" : 0 ,
+                         "childeren.parent" : 0
+                    }
+               },
+               {
+                    $match :{
+                         parent : undefined
+                    }
+               }
+          ]) */
+             const categories = await CategoryModel.find({parent : undefined})
              return res.status(200).json({
                data : {
                     statusCode : 200 , 
-                    category
+                    categories
                }
              })
         } catch (error) {
@@ -80,9 +124,59 @@ class CategoryController extends Controller{
          
         }
      }
+     async getAllCategoryWithOutPopulate(req,res,next){
+          try {
+               const categories = await CategoryModel.aggregate([
+                    {
+                    $match : {}
+               },{
+                    $project :{
+                         __v : 0 }
+                    }]);
+               return res.status(200).json({
+                 data : {
+                      statusCode : 200 , 
+                      categories
+                 }
+               })
+          } catch (error) {
+                   next(error)
+           
+          }
+       }
      async getCategoryById(req,res,next){
         try {
-             return res.status(200).send("index Page Store");
+               const {id : _id} = req.params ;
+               await this.checkExistCategory(_id);
+               const category = await CategoryModel.aggregate([
+               {
+               $match :{
+                _id : mongoose.Types.ObjectId(_id)
+                         }
+               },{
+               $lookup : {
+                    from : "categories" ,
+                    localField : "_id" ,
+                    foreignField : "parent" ,
+                    as : "childeren"
+               }
+               },{
+                    $project :{
+                         __v : 0 ,
+                         "childeren.__v" : 0 ,
+                         "childeren.parent" : 0
+                    }
+               }
+               
+
+          ])
+          
+          return res.status(200).json({
+               data : {
+                    statusCode : 200 , 
+                    category
+               }
+             })
         } catch (error) {
                  next(error)
          

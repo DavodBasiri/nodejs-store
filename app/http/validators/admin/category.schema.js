@@ -5,6 +5,11 @@ const addCetegorySchema =Joi.object({
     parent: Joi.string().pattern(MongoIdPatern).allow('').allow("").error(new Error("pls enter parent"))
   
 })
+const updateCetegorySchema =Joi.object({
+    title : Joi.string().trim().max(30).min(3).required().error(new Error("pls enter title"))
+  
+})
 module.exports ={
-    addCetegorySchema
+    addCetegorySchema,
+    updateCetegorySchema
 }
