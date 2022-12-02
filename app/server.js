@@ -53,7 +53,7 @@ module.exports = class Aplication{
     createServer(){
         const http=require("http");
         http.createServer(this.#app).listen(this.#PORT , () =>{
-            console.log("run > http://localhost:"+this.#PORT);
+            console.log("run > http://localhost:"+this.#PORT+'/api-doc');
         })
     }
 
