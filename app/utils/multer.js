@@ -1,11 +1,13 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-function createRoute() {
+const createHttpError = require("http-errors");
+function createRoute(req) {
   const date = new Date();
   const Year = date.getFullYear().toString();
-  const Month = date.getMonth().toString();
+  const Month = (date.getMonth() + 1).toString();
   const Day = date.getDate().toString();
+  req.body.fileUploadPath = path.join("uploads", "blogs", Year, Month, Day);
   const directory = path.join(
     __dirname,
     "..",
@@ -22,16 +24,39 @@ function createRoute() {
 }
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const filePath = createRoute();
-    cb(null, filePath);
+    if (file?.originalname) {
+      
+      const filePath = createRoute(req);
+      console.log('filePath ',filePath)
+      return cb(null, filePath);
+    }
+    cb(null, null);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const fileName = String(new Date().getTime() + ext);
-    cb(null,fileName)
+    if (file.originalname) {
+      
+      const ext = path.extname(file.originalname);
+      const fileName = String(new Date().getTime() + ext);
+      req.body.filename = fileName;
+      console.log('filename',fileName)
+      return cb(null, fileName);
+    }
+    cb(null, null);
   },
 });
-const uploadFile=multer({storage});
-module.exports={
-    uploadFile
+function fileFilter(req, file, cb) {
+  const ext = path.extname(file.originalname);
+  const mimetype = [".png", ".jpg", ".webp", ".jpeg", ".gif"];
+  if (mimetype.includes(ext)) {
+    return cb(null, true);
+  }
+  return cb(createHttpError.BadRequest("Image Format incorecte"));
 }
+const maxSize = 1 * 100 * 1000;
+const uploadFile = multer({
+  storage,
+  limits: { fileSize: maxSize },
+});
+module.exports = {
+  uploadFile,
+};
