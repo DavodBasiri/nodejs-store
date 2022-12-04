@@ -82,6 +82,7 @@ module.exports = class Aplication{
     }
 
     initRedis(){
+        // sudo  redis-server
         require("./utils/init_redis");
     }
 
