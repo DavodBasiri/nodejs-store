@@ -19,6 +19,7 @@ const Schema = new mongoose.Schema(
     discount: { type: Number },
     brithday: { type: String },
     roles: { type: [String], default: "USER" },
+    courses: { type: [mongoose.Types.ObjectId], ref: "course", default: [] },
   },
   {
     timestamps: true,

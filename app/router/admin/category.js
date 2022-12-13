@@ -132,11 +132,15 @@ router.delete("/delete/:id",CategoryController.removeCategory);
  *              in: path
  *              required: true
  *              type: string
- *          -   name: title
- *              description: enter Title
- *              in: formData
+ *          requestBody:
  *              required: true
- *              type: string
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Category'
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Category'
  *          responses:
  *              200:
  *                  description: Success
