@@ -6,6 +6,7 @@ const Controller = require("../controller");
 class CategoryController extends Controller{
      async addCategory(req,res,next){
        try {
+          console.log(req.body)
             const {title,parent} = req.body;
             await addCetegorySchema.validateAsync(req.body);
             const category = await CategoryModel.create({title,parent});

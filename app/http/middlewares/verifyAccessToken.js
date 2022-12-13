@@ -3,7 +3,7 @@ const JWT = require("jsonwebtoken");
 const { UserModel } = require("../../models/users");
 const { ACCESS_TOKEN_SECRET_KEY } = require("../../utils/constans");
 function getToken(headers) {
-  const [bearer, token] = headers?.["accesstoken"]?.split(" ") || [];
+  const [bearer, token] = headers?.authorization?.split(" ") || [];
   if (token && ["Bearer", "bearer"].includes(bearer)) return token;
   throw createHttpError.Unauthorized(
     "User account not recognized.Login to your account"

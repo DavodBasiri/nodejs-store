@@ -1,6 +1,25 @@
 const { CategoryController } = require("../../http/controllers/admin/category.controller");
-
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTM3OTMwMDQzMiIsInVzZXJJRCI6IjYyZWE0MmMxNjZjNDRlMTgxYWFlNjE3NSIsImlhdCI6MTY3MDk0MDk5OCwiZXhwIjoxNjcxMDI3Mzk4fQ.FrjJe1mZNPVtKsBq7d9UI-Om5PMLnVWVGR3UVd5_NaQ
 const router = require("express").Router();
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          Category:
+ *              type: object
+ *              required:
+ *                  -   title
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                      description: the titile of Category
+ *                  parent:
+ *                      type: string
+ *                      description: Parent of Category
+ *        
+ */
+
+
 /**
  * @swagger
  * /admin/category/add:
@@ -8,17 +27,15 @@ const router = require("express").Router();
  *          tags : [Category(Adimn-Panel)]
  *          summary: Create New Category Title
  *          description: Add An Category
- *          parameters:
- *          -   name: title
- *              description: enter title
- *              in: formData
+ *          requestBody:
  *              required: true
- *              type: string
- *          -   name: parent
- *              description: enter parent
- *              in: formData
- *              required: false
- *              type: string
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Category'
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Category'
  *          responses:
  *              201:
  *                  description: Success
