@@ -18,8 +18,6 @@ const router = require("express").Router();
  *                      description: Parent of Category
  *        
  */
-
-
 /**
  * @swagger
  * /admin/category/add:
@@ -167,5 +165,5 @@ router.patch("/edit/:id",CategoryController.editCategory);
  */
 router.get("/:id",CategoryController.getCategoryById);
 module.exports ={
-    CategoryRoutes : router
+    AdminApiCategoryRoutes : router
 }

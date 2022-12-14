@@ -1,19 +1,21 @@
 const { VerifyAccessToken } = require("../../http/middlewares/verifyAccessToken");
-const { BlogAdminApiRoutes } = require("./blog");
-const { CategoryRoutes } = require("./category");
+const { AdminApiBlogRoutes } = require("./blog");
+const { AdminApiCategoryRoutes } = require("./category");
+const { AdminApiProductRouter } = require("./product.routes");
 const router = require("express").Router();
 /**
  * @swagger
  *  tags :
- *      -    name : Adimn-Panel
- *           description : Action Of Admin (add , remove , edit and... )
+ *      -    name : Adimn-Panel(Product)
+ *           description : All Method And Routes About Product Section
  *      -    name : Category(Adimn-Panel)
- *           description : All Method And Routes About Category Section
+ *           description : All Method And Routes About Category Section  
  *      -    name : Blogs(Admin-Panel)
- *           description : All Method And Routes About Category Section
+ *           description : All Method And Routes About Blog Section
  */
-router.use("/category",CategoryRoutes);
-router.use("/blog",BlogAdminApiRoutes);
+router.use("/category",AdminApiCategoryRoutes);
+router.use("/blog",AdminApiBlogRoutes);
+router.use("/product",AdminApiProductRouter);
 
 module.exports = {
     AdminRouts : router
