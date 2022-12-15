@@ -75,6 +75,9 @@ function listOfImagesFromRequest(files, fileUploadPath) {
   }
   return [];
 }
+function copyObject(object){
+  return JSON.parse(JSON.stringify(object))
+}
 module.exports = {
   RandomNumberGenerator,
   SignAccessToken,
@@ -82,4 +85,5 @@ module.exports = {
   VerifyRefreshToken,
   deleteFileInPublic,
   listOfImagesFromRequest,
+  copyObject
 };
