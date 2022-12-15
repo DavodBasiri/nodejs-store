@@ -67,10 +67,19 @@ function deleteFileInPublic(fileAddress) {
   const pathFile = path.join(__dirname, "..", "..", "public", fileAddress);
   if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile);
 }
+function listOfImagesFromRequest(files, fileUploadPath) {
+  if (files?.length > 0) {
+   
+    return files.map((file) => path.join(fileUploadPath, file.filename).replace(/[\\\\]/gm, "/")
+    );
+  }
+  return [];
+}
 module.exports = {
   RandomNumberGenerator,
   SignAccessToken,
   SignRefreshToken,
   VerifyRefreshToken,
   deleteFileInPublic,
+  listOfImagesFromRequest,
 };

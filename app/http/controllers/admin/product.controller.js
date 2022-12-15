@@ -2,7 +2,11 @@ const { ProductModel } = require("../../../models/products");
 const { creatProductSchema } = require("../../validators/admin/product.schema");
 const Controller = require("../controller");
 const path = require("path");
-const { deleteFileInPublic } = require("../../../utils/function");
+const {
+  deleteFileInPublic,
+  listOfImagesFromRequest,
+} = require("../../../utils/function");
+const { ObjectIdValidator } = require("../../validators/public.validator");
 class ProductController extends Controller {
   async createProduct(req, res, next) {
     try {
@@ -19,18 +23,21 @@ class ProductController extends Controller {
         count,
         short_text,
         tags,
-        type,
         category,
       } = productBody;
-      let feture = {};
+      let feture = {},
+        type = "physical";
+      if (width || length || wighth || height) {
+        console.log(1);
+      } else type = "virtual";
       feture.width = width;
       feture.length = length;
       feture.wighth = wighth;
       feture.height = height;
-      req.body.images = path
-        .join(productBody.fileUploadPath, productBody.filename)
-        .replace(/[\\\\]/gm, "/");
-      const images = req.body.images;
+      const images = listOfImagesFromRequest(
+        req?.files || [],
+        req.body.fileUploadPath
+      );
       const supplier = req.user._id;
       const product = await ProductModel.create({
         discount,
@@ -70,7 +77,7 @@ class ProductController extends Controller {
   }
   async getListOfProducts(req, res, next) {
     try {
-      const Products = await ProductModel.find({})
+      const Products = await ProductModel.find({});
       if (Products)
         return res.status(200).json({
           data: {
@@ -84,24 +91,24 @@ class ProductController extends Controller {
       next(error);
     }
   }
-  //   async getOneProductByID(req, res, next) {
-  //     try {
-  //       const { id } = req.params;
-  //       console.log("inja");
-  //       const Product = await this.findProduct({ _id: id });
-  //       console.log(Product);
-  //       return res.status(200).json({
-  //         data: {
-  //           statusCode: 200,
-  //           success: true,
-  //           message: "Product find Successfully",
-  //           data: Product,
-  //         },
-  //       });
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   }
+  async getOneProductByID(req, res, next) {
+    try {
+      const { id } = req.params;
+      console.log("inja");
+      const Product = await this.findProductById(id);
+      console.log(Product);
+      return res.status(200).json({
+        data: {
+          statusCode: 200,
+          success: true,
+          message: "Product find Successfully",
+          data: Product,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   //   async getCommentsOfProduct(req, res, next) {
   //     try {
   //     } catch (error) {
@@ -166,17 +173,18 @@ class ProductController extends Controller {
   //       next(error);
   //     }
   //   }
-  //   async findProduct(_id) {
-  //     const Product = await ProductModel.findById({ _id }).populate([
-  //       { path: "category", select: ["title"] },
-  //       { path: "author", select: ["mobile"] },
-  //     ]);
-  //     if (!Product) {
-  //       throw createHttpError.NotFound("Can not found Product");
-  //     }
-  //     console.log(Product);
-  //     return Product;
-  //   }
+  async findProductById(productID) {
+    const { id } = await ObjectIdValidator.validateAsync({ id: productID });
+    const Product = await ProductModel.findById({ _id:id }).populate([
+      { path: "category", select: ["title"] },
+      { path: "supplier", select: ["mobile"] },
+    ]);
+    if (!Product) {
+      throw createHttpError.NotFound("Can not found Product");
+    }
+    console.log(Product);
+    return Product;
+  }
 }
 module.exports = {
   ProductController: new ProductController(),

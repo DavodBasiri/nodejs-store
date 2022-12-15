@@ -27,7 +27,6 @@ const storage = multer.diskStorage({
     if (file?.originalname) {
       
       const filePath = createRoute(req);
-      console.log('filePath ',filePath)
       return cb(null, filePath);
     }
     cb(null, null);
@@ -38,7 +37,6 @@ const storage = multer.diskStorage({
       const ext = path.extname(file.originalname);
       const fileName = String(new Date().getTime() + ext);
       req.body.filename = fileName;
-      console.log('filename',fileName)
       return cb(null, fileName);
     }
     cb(null, null);

@@ -4,7 +4,8 @@ const { uploadFile } = require('../../utils/multer');
 
 const router = require("express").Router();
 router.get('/',ProductController.getListOfProducts);
-router.post('/add',uploadFile.single('images'),stringToArray('tags'),ProductController.createProduct);
+router.get('/:id',ProductController.getOneProductByID);
+router.post('/add',uploadFile.array('images',10),stringToArray('tags'),ProductController.createProduct);
 // router.patch();
 // router.delete();
 
@@ -24,7 +25,6 @@ router.post('/add',uploadFile.single('images'),stringToArray('tags'),ProductCont
  *                  -   price
  *                  -   discount
  *                  -   count
- *                  -   type
  *              properties:
  *                  title:
  *                      type: string
@@ -47,9 +47,6 @@ router.post('/add',uploadFile.single('images'),stringToArray('tags'),ProductCont
  *                  count:
  *                      type: string
  *                      description: the titile of Product
- *                  type:
- *                      type: string
- *                      description: Parent of Product
  *                  discount:
  *                      type: string
  *                      description: Parent of Product
@@ -66,8 +63,11 @@ router.post('/add',uploadFile.single('images'),stringToArray('tags'),ProductCont
  *                      type: string
  *                      description: Parent of Product 
  *                  images:
- *                      type: file
- *                      description: Parent of Product
+ *                      type: array
+ *                      description: Parent of 
+ *                      items:
+ *                          type: string
+ *                          format: binary
  *        
  */
 
@@ -105,6 +105,23 @@ router.post('/add',uploadFile.single('images'),stringToArray('tags'),ProductCont
  *      responses:
  *              200:
  *                  description: Success - get arry of Product
+ */
+ /**
+ * @swagger
+ * /admin/product/{id}:
+ *   get:
+ *          tags : [Adimn-Panel(Product)]
+ *          summary: Find Product By Id
+ *          description: Find
+ *          parameters:
+ *          -   name: id
+ *              description: enter ID
+ *              in: path
+ *              required: true
+ *              type: string
+ *          responses:
+ *              200:
+ *                  description: Success
  */
 module.exports={
     AdminApiProductRouter: router
