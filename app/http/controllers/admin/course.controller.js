@@ -1,5 +1,5 @@
-const { ProductModel } = require("../../../models/products");
-const { creatProductSchema } = require("../../validators/admin/product.schema");
+const { CourseModel } = require("../../../models/course");
+//const { creatCourseSchema } = require("../../validators/admin/Course.schema");
 const Controller = require("../controller");
 const path = require("path");
 const {
@@ -10,60 +10,38 @@ const {
 const { StatusCodes: HttpSatatus } = require("http-status-codes");
 const { ObjectIdValidator } = require("../../validators/public.validator");
 const createHttpError = require("http-errors");
+const { creatCourseSchema } = require("../../validators/admin/course.schema");
 let images;
-class ProductController extends Controller {
-  async createProduct(req, res, next) {
+class CourseController extends Controller {
+  async createCourse(req, res, next) {
     try {
-      const productBody = await creatProductSchema.validateAsync(req.body);
-      const {
-        discount,
-        width,
-        length,
-        wighth,
-        height,
-        price,
-        title,
-        text,
-        count,
-        short_text,
-        tags,
-        category,
-      } = productBody;
-      let feture = {},
-        type = "physical";
-      if (width || length || wighth || height) {
-        console.log(1);
-      } else type = "virtual";
-      feture.width = width;
-      feture.length = length;
-      feture.wighth = wighth;
-      feture.height = height;
+      const CourseBody = await creatCourseSchema.validateAsync(req.body);
+      const { discount, price, title, text, short_text, tags, category, type } =
+        CourseBody;
+      const teacher = req.user._id;
       const images = listOfImagesFromRequest(
         req?.files || [],
         req.body.fileUploadPath
       );
-      const supplier = req.user._id;
-      const product = await ProductModel.create({
+      const Course = await CourseModel.create({
         discount,
-        feture,
         price,
         title,
         text,
-        count,
         short_text,
         tags,
         type,
         category,
         images,
-        supplier,
+        teacher,
       });
-      if (product) {
+      if (Course) {
         return res.status(HttpSatatus.CREATED).json({
           data: {
             statusCode: HttpSatatus.CREATED,
             success: true,
-            message: "product Create Successfully",
-            data: product,
+            message: "Course Create Successfully",
+            data: Course,
           },
         });
       }
@@ -76,98 +54,97 @@ class ProductController extends Controller {
       });
     } catch (error) {
       if (images)
-      for (let index = 0; index < images.length; index++) {
-        deleteFileInPublic(images[index]);
-      }
+        for (let index = 0; index < images.length; index++) {
+          deleteFileInPublic(images[index]);
+        }
       next(error);
     }
   }
-  async getListOfProducts(req, res, next) {
+  async getListOfCourses(req, res, next) {
     try {
-      const Products = await ProductModel.find({});
-      if (Products)
+      const Courses = await CourseModel.find({});
+      if (Courses)
         return res.status(HttpSatatus.OK).json({
           data: {
             statusCode: HttpSatatus.OK,
             success: true,
-            message: "List Of Products",
-            data: Products,
+            message: "List Of Courses",
+            data: Courses,
           },
         });
     } catch (error) {
       next(error);
     }
   }
-  async getOneProductByID(req, res, next) {
+  async getOneCourseByID(req, res, next) {
     try {
       const { id } = req.params;
-      const Product = await this.findProductById(id);
-      console.log(Product);
+      const Course = await this.findCourseById(id);
+      console.log(Course);
       return res.status(HttpSatatus.OK).json({
         data: {
           statusCode: HttpSatatus.OK,
           success: true,
-          message: "Product find Successfully",
-          data: Product,
+          message: "Course find Successfully",
+          data: Course,
         },
       });
     } catch (error) {
       next(error);
     }
   }
-  async deleteProductByID(req, res, next) {
+  async deleteCourseByID(req, res, next) {
     try {
       const { id } = req.params;
-      //const resulte= await ProductModel.findOneAndDelete({_id:id})
-      //await this.findProduct(id)
-      //const result = await ProductModel.deleteOne({_id:id})
-      const result = await ProductModel.findOneAndDelete({ _id: id });
+      //const resulte= await CourseModel.findOneAndDelete({_id:id})
+      //await this.findCourse(id)
+      //const result = await CourseModel.deleteOne({_id:id})
+      const result = await CourseModel.findOneAndDelete({ _id: id });
 
       if (!result) throw createHttpError.InternalServerError("Delete failed");
       return res.status(HttpSatatus.OK).json({
         data: {
           statusCode: HttpSatatus.OK,
           success: true,
-          message: "Product Delete Successfully",
+          message: "Course Delete Successfully",
         },
       });
     } catch (error) {
       next(error);
     }
   }
-  async getProductBySearch(req, res, next) {
+  async getCourseBySearch(req, res, next) {
     try {
       const search = req?.query?.search || "";
       if (search) {
-        const Products = await ProductModel.find({
+        const Courses = await CourseModel.find({
           $text: {
             $search: search,
           },
         });
-        console.log(Products);
-        if (Products.length > 0)
+        if (Courses.length > 0)
           return res.status(HttpSatatus.OK).json({
             data: {
               statusCode: HttpSatatus.OK,
               success: true,
-              message: "List Of Products",
-              data: Products,
+              message: "List Of Courses",
+              data: Courses,
             },
           });
-        throw createHttpError.NotFound("Can not found Product");
+        throw createHttpError.NotFound("Can not found Course");
       }
-      throw createHttpError.NotFound("Can not found Product");
+      throw createHttpError.NotFound("Can not found Course");
     } catch (error) {
       next(error);
     }
   }
-  async updateProductByID(req, res, next) {
+  async updateCourseByID(req, res, next) {
     try {
       const { id } = req.params;
       const supplier = req.user._id;
       const data = copyObject(req.body);
       data.feture = this.setFeatures(req.body);
-      //req.protocol +"://" +req.get("host") +"/" +path.join(ProductDataBody.fileUploadPath,ProductDataBody.filename).replace(/[\\\\]/gm, "/");
+      //req.protocol +"://" +req.get("host") +"/" +path.join(CourseDataBody.fileUploadPath,CourseDataBody.filename).replace(/[\\\\]/gm, "/");
       const nullisData = process.env.NULLisData;
       const blockList = [
         "fileUploadPath",
@@ -194,7 +171,7 @@ class ProductController extends Controller {
         req.body.fileUploadPath
       );
       console.log(data);
-      const updateResult = await ProductModel.updateOne(
+      const updateResult = await CourseModel.updateOne(
         { _id: id, supplier },
         { $set: data }
       );
@@ -204,7 +181,7 @@ class ProductController extends Controller {
         data: {
           statusCode: HttpSatatus.OK,
           success: true,
-          message: "The Product update was done successfully",
+          message: "The Course update was done successfully",
         },
       });
     } catch (error) {
@@ -215,17 +192,17 @@ class ProductController extends Controller {
       next(error);
     }
   }
-  async findProductById(productID) {
-    const { id } = await ObjectIdValidator.validateAsync({ id: productID });
-    const Product = await ProductModel.findById({ _id: id }).populate([
+  async findCourseById(CourseID) {
+    const { id } = await ObjectIdValidator.validateAsync({ id: CourseID });
+    const Course = await CourseModel.findById({ _id: id }).populate([
       { path: "category", select: ["title"] },
-      { path: "supplier", select: ["mobile"] },
+      { path: "teacher", select: ["mobile"] },
     ]);
-    if (!Product) {
-      throw createHttpError.NotFound("Can not found Product");
+    if (!Course) {
+      throw createHttpError.NotFound("Can not found Course");
     }
-    console.log(Product);
-    return Product;
+    console.log(Course);
+    return Course;
   }
   setFeatures(body) {
     const { width, length, wighth, height } = body;
@@ -249,5 +226,5 @@ class ProductController extends Controller {
   }
 }
 module.exports = {
-  ProductController: new ProductController(),
+  CourseController: new CourseController(),
 };

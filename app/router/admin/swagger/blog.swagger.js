@@ -1,11 +1,4 @@
-const { string } = require("joi");
-const {
-  AdminBlogController,
-} = require("../../http/controllers/admin/blog.controller");
-const { stringToArray } = require("../../http/middlewares/stringToArray");
-const { uploadFile } = require("../../utils/multer");
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTM3OTMwMDQzMiIsInVzZXJJRCI6IjYyZWE0MmMxNjZjNDRlMTgxYWFlNjE3NSIsImlhdCI6MTY3MDk0MDk5OCwiZXhwIjoxNjcxMDI3Mzk4fQ.FrjJe1mZNPVtKsBq7d9UI-Om5PMLnVWVGR3UVd5_NaQ
-const router = require("express").Router();
+
 /**
  * @swagger
  *  components:
@@ -17,7 +10,7 @@ const router = require("express").Router();
  *                  -   text
  *                  -   short_text
  *                  -   category
- *                  -   image 
+ *                  -   image
  *              properties:
  *                  title:
  *                      type: string
@@ -37,7 +30,7 @@ const router = require("express").Router();
  *                  image:
  *                      type: file
  *                      description: index picture of blo\g
- *        
+ *
  */
 
 /**
@@ -50,30 +43,30 @@ const router = require("express").Router();
  *              200:
  *                  description: Success - get arry of blogs
  */
-router.get("/", AdminBlogController.getListOfBlogs);
+
 /**
  * @swagger
  *  /admin/blog/add:
- *    post: 
+ *    post:
  *      tags: [Blogs(Admin-Panel)]
- *      summary : Create Blog 
+ *      summary : Create Blog
  *      requestBody:
  *              required: true
  *              content:
  *                  multipart/form-data:
  *                      schema:
  *                          $ref: '#/components/schemas/Blog'
- *                  
- *      responses: 
+ *
+ *      responses:
  *        201:
  *           description: Created - Success
  */
-router.post('/add',uploadFile.single('image'),stringToArray('tags'),AdminBlogController.createBlog);
+
 
 /**
  * @swagger
  *  /admin/blog/update/{id}:
- *    patch: 
+ *    patch:
  *      tags: [Blogs(Admin-Panel)]
  *      summary : update Blog By Id
  *      customes:
@@ -112,12 +105,12 @@ router.post('/add',uploadFile.single('image'),stringToArray('tags'),AdminBlogCon
  *          -   in: formData
  *              name: image
  *              type: file
- *      responses: 
+ *      responses:
  *        201:
  *           description: Created - Success
  */
- router.patch('/update/:id',uploadFile.single('image'),stringToArray('tags'),AdminBlogController.updateBlogByID);
- /**
+
+/**
  * @swagger
  * /admin/blog/{id}:
  *   get:
@@ -139,8 +132,8 @@ router.post('/add',uploadFile.single('image'),stringToArray('tags'),AdminBlogCon
  *              200:
  *                  description: Success
  */
-router.get('/:id',AdminBlogController.getOneBlogByID)
- /**
+
+/**
  * @swagger
  * /admin/blog/{id}:
  *   delete:
@@ -162,8 +155,4 @@ router.get('/:id',AdminBlogController.getOneBlogByID)
  *              200:
  *                  description: Success
  */
-  router.delete('/:id',AdminBlogController.deleteBlogByID)
-module.exports = {
-  AdminApiBlogRoutes: router,
-  
-};
+

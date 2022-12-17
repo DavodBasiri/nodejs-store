@@ -5,7 +5,10 @@ const Schema = new mongoose.Schema({
     text : {type : String },
     image : {type : String ,required :true},
     type : {type : String ,default : "main"}
-});
+},
+{
+  timestamps: true}
+  );
 module.exports ={
     SliderModel : mongoose.model("slider",Schema)
 }

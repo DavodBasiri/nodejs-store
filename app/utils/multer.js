@@ -54,6 +54,7 @@ const maxSize = 1 * 100 * 1000;
 const uploadFile = multer({
   storage,
   limits: { fileSize: maxSize },
+  fileFilter
 });
 module.exports = {
   uploadFile,

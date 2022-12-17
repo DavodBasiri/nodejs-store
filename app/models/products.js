@@ -30,7 +30,10 @@ const ProductSchema = new mongoose.Schema({
       madein: "",
     },
   },
-});
+},
+{
+  timestamps: true}
+  );
 ProductSchema.index({ title: "text", short_text: "text", text: "text" });
 module.exports = {
   ProductModel: mongoose.model("product", ProductSchema),

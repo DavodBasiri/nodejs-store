@@ -1,0 +1,21 @@
+const createHttpError = require("http-errors");
+const Joi = require("joi");
+const { MongoIdPatern } = require("../../../utils/constans");
+const creatCourseSchema = Joi.object({
+  title: Joi.string().trim().max(30).min(3).required().error(createHttpError.BadRequest("pls enter title")),
+  text: Joi.string().error(createHttpError.BadRequest("Pls Enter Text")),
+  short_text: Joi.string().error(createHttpError.BadRequest("Pls Enter Short text")),
+  type: Joi.string().error(createHttpError.BadRequest("Pls Enter product type")),
+  filename: Joi.string().regex(/(\.png|\.jpg|\.webp|\.jpeg|\.gif|)$/).error(createHttpError.BadRequest("Pls Send Image")),
+  tags: Joi.array().min(0).max(20).error(createHttpError.BadRequest("Max of tags is 20")),
+  price: Joi.number().error(createHttpError.BadRequest("The entered price is not correct")),
+  discount: Joi.number().error(createHttpError.BadRequest("The entered discount is not correct")),
+  type: Joi.string().regex(/(free||vip||cip)/i).error(createHttpError.BadRequest("The entered discount is not correct")),
+  category: Joi.string()
+    .regex(MongoIdPatern)
+    .error(createHttpError.BadRequest("Can not found Category")),
+    fileUploadPath:Joi.allow(),
+});
+module.exports = {
+    creatCourseSchema,
+};

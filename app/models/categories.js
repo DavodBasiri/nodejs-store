@@ -7,7 +7,8 @@ const Schema = new mongoose.Schema({
     id : false ,
     toJSON :{
         virtuals :true
-    }
+    },
+    timestamps: true
 });
 Schema.virtual("childern" , {
     ref : "category" ,

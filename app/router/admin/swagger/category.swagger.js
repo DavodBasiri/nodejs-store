@@ -1,6 +1,4 @@
-const { CategoryController } = require("../../http/controllers/admin/category.controller");
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTM3OTMwMDQzMiIsInVzZXJJRCI6IjYyZWE0MmMxNjZjNDRlMTgxYWFlNjE3NSIsImlhdCI6MTY3MDk0MDk5OCwiZXhwIjoxNjcxMDI3Mzk4fQ.FrjJe1mZNPVtKsBq7d9UI-Om5PMLnVWVGR3UVd5_NaQ
-const router = require("express").Router();
+
 /**
  * @swagger
  *  components:
@@ -44,7 +42,7 @@ const router = require("express").Router();
  *              500:
  *                  description: Internal Server Error
  */
-router.post("/add",CategoryController.addCategory);
+
 /**
  * @swagger
  * /admin/category/parents:
@@ -56,7 +54,7 @@ router.post("/add",CategoryController.addCategory);
  *              200:
  *                  description: Success
  */
-router.get("/parents",CategoryController.getAllParentCategory);
+
 /**
  * @swagger
  * /admin/category/children/{parent}:
@@ -74,7 +72,7 @@ router.get("/parents",CategoryController.getAllParentCategory);
  *              200:
  *                  description: Success
  */
- router.get("/children/:parent",CategoryController.getChlidOfParent);
+
  /**
  * @swagger
  * /admin/category/all-category:
@@ -86,7 +84,7 @@ router.get("/parents",CategoryController.getAllParentCategory);
  *              200:
  *                  description: Success
  */
-router.get("/all-category",CategoryController.getAllCategory);
+
  /**
  * @swagger
  * /admin/category/all-category-aggregate:
@@ -98,7 +96,7 @@ router.get("/all-category",CategoryController.getAllCategory);
  *              200:
  *                  description: Success
  */
-router.get("/all-category-aggregate",CategoryController.getAllCategoryWithOutPopulate);
+
 /**
  * @swagger
  * /admin/category/delete/{id}:
@@ -116,7 +114,7 @@ router.get("/all-category-aggregate",CategoryController.getAllCategoryWithOutPop
  *              200:
  *                  description: Success
  */
-router.delete("/delete/:id",CategoryController.removeCategory);
+
 /**
  * @swagger
  * /admin/category/edit/{id}:
@@ -145,7 +143,7 @@ router.delete("/delete/:id",CategoryController.removeCategory);
  *              500:
  *                  description: Internal Server Error
  */
-router.patch("/edit/:id",CategoryController.editCategory);
+
  /**
  * @swagger
  * /admin/category/{id}:
@@ -163,7 +161,3 @@ router.patch("/edit/:id",CategoryController.editCategory);
  *              200:
  *                  description: Success
  */
-router.get("/:id",CategoryController.getCategoryById);
-module.exports ={
-    AdminApiCategoryRoutes : router
-}
